@@ -170,7 +170,14 @@ io.on('connection', (socket) => {
     });
 });
 
-const PORT = 3000;
-server.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+const PORT = process.env.PORT || 3000;
+
+if (process.env.VERCEL) {
+    // Vercel serverless function entry point
+    module.exports = app;
+} else {
+    // Local development entry point
+    server.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+    });
+}
