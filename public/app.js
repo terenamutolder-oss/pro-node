@@ -606,8 +606,21 @@ async function joinCall() {
         const video = document.getElementById('local-video');
         video.srcObject = stream;
     } catch (e) {
-        console.error(e);
-        alert('Could not access camera/mic');
+        console.warn('Video/Audio access failed, trying Audio only...', e);
+        try {
+            // Fallback: Audio only
+            const audioStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+            activeCallStream = audioStream;
+            const video = document.getElementById('local-video');
+            video.srcObject = audioStream;
+            alert('Camera not found or denied. Switched to Audio call.');
+        } catch (err) {
+            console.error('Media access failed completely', err);
+            let msg = 'Could not access microphone.';
+            if (err.name === 'NotAllowedError') msg = 'Permission denied. Please allow camera/microphone access in your browser settings.';
+
+            alert(msg);
+        }
     }
 }
 

@@ -1,8 +1,10 @@
 const fs = require('fs/promises');
 const path = require('path');
+const os = require('os');
 const { v4: uuidv4 } = require('uuid');
 
-const DATA_DIR = path.join(__dirname, 'data');
+// Use OS temp directory for Vercel compatibility (ephemeral)
+const DATA_DIR = path.join(os.tmpdir(), 'pronode_data');
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
 const CHATS_FILE = path.join(DATA_DIR, 'chats.json');
 
@@ -14,6 +16,7 @@ async function init() {
     try {
         await fs.access(USERS_FILE);
     } catch {
+        // Create default file if not exists
         await fs.writeFile(USERS_FILE, '[]');
     }
 
@@ -28,14 +31,16 @@ init();
 
 async function read(file) {
     try {
+        await init(); // Ensure dir exists before read
         const data = await fs.readFile(file, 'utf8');
         return JSON.parse(data);
-    } catch {
+    } catch (e) {
         return [];
     }
 }
 
 async function write(file, data) {
+    await init();
     await fs.writeFile(file, JSON.stringify(data, null, 2));
 }
 
