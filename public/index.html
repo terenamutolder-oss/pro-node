@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProNode Chat</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- AUTH VIEW -->
+        <section id="auth-view" class="view active">
+            <div class="auth-container">
+                <h1 class="logo">ProNode</h1>
+                <div class="auth-tabs">
+                    <button id="tab-login" class="active">Log In</button>
+                    <button id="tab-signup">Sign In</button>
+                </div>
+
+                <form id="login-form" class="auth-form">
+                    <h2>Welcome Back</h2>
+                    <input type="text" id="login-username" placeholder="Username" required>
+                    <input type="password" id="login-password" placeholder="Password" required>
+                    <button type="submit">Log In</button>
+                </form>
+
+                <form id="signup-form" class="auth-form hidden">
+                    <h2>Are you new to FlipIt? <span class="highlight">Sign In</span></h2>
+                    <p class="subtitle">Choose your user name and password</p>
+                    <input type="text" id="signup-username" placeholder="Username" required>
+                    <input type="password" id="signup-password" placeholder="Password" required>
+                    <button type="submit">Sign In</button>
+                    <p id="signup-error" class="error-msg"></p>
+                </form>
+            </div>
+        </section>
+
+        <!-- HOME VIEW -->
+        <section id="home-view" class="view">
+            <header>
+                <div class="user-info">
+                    <span id="current-user-display">User</span>
+                </div>
+                <div class="actions">
+                    <button id="show-notifications-btn" class="icon-btn" title="Notifications">🔔</button>
+                    <button id="settings-btn" class="icon-btn" title="Settings">⚙️</button>
+                </div>
+            </header>
+
+            <div class="main-content">
+                <div class="section-header">
+                    <h2>Chats</h2>
+                    <button id="create-chat-btn" class="icon-btn primary-icon" title="Create Chat">📮</button>
+                </div>
+
+                <div id="chats-list" class="list-container">
+                    <!-- Chat items injected here -->
+                </div>
+            </div>
+
+            <!-- Notifications Modal -->
+            <div id="notifications-modal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Notifications</h3>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    <div id="notifications-list" class="list-modal-body">
+                        <!-- Notifications injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings/Friends Modal -->
+            <div id="settings-modal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Settings & Friends</h3>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <h4>Friend Invitation 📜</h4>
+                        <div class="input-group">
+                            <input type="text" id="invite-username" placeholder="Friend's Username">
+                            <button id="send-invite-btn">Send Invite</button>
+                        </div>
+                        <p id="invite-status"></p>
+
+                        <h4>My Friends</h4>
+                        <div id="friends-list" class="simple-list">
+                            <!-- Friends list -->
+                        </div>
+
+                        <button id="logout-btn" class="danger-btn">Log Out</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create Chat Modal -->
+            <div id="create-chat-modal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Create Chat</h3>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" id="new-chat-name" placeholder="Name of chat">
+                        <h4>People Inside</h4>
+                        <div id="create-chat-friends-list" class="selection-list">
+                            <!-- Checkbox list of friends -->
+                        </div>
+                        <button id="confirm-create-chat-btn" class="primary-btn">Create Chat</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Options Modal -->
+            <div id="chat-options-modal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Chat Options</h3>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    <div class="modal-body column-actions">
+                        <button id="rename-chat-option">Rename</button>
+                        <button id="delete-chat-option" class="danger-text">Delete Chat</button>
+                        <button id="see-people-option">See People</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- See People Modal -->
+            <div id="see-people-modal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>People</h3>
+                        <button class="close-back-people">⬅ Back</button>
+                    </div>
+                    <div id="chat-people-list" class="list-modal-body">
+                        <!-- People with Call/Msg buttons -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Incoming Call Modal -->
+            <div id="incoming-call-modal" class="modal hidden">
+                <div class="modal-content auth-container">
+                    <h2 id="caller-name-display">Someone is calling...</h2>
+                    <div class="call-actions-row">
+                        <button id="join-call-btn" class="success-btn-lg">Join Call</button>
+                        <button id="decline-call-btn" class="danger-btn-lg">Decline</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAT VIEW -->
+        <section id="chat-view" class="view">
+            <header class="chat-header">
+                <div class="left-controls">
+                    <button id="back-to-home" class="icon-btn">⬅</button>
+                    <h3 id="current-chat-name">Chat Name</h3>
+                </div>
+                <div class="right-controls">
+                    <button id="call-group-btn" class="icon-btn" title="Call Group">☎</button>
+                    <button id="chat-menu-btn" class="icon-btn" title="Menu">...</button>
+                </div>
+            </header>
+
+            <div id="messages-container" class="messages-area">
+                <!-- Messages injected here -->
+            </div>
+
+            <div class="chat-input-area">
+                <button id="input-files-btn" class="icon-btn sm">📎</button>
+                <input type="text" id="message-input" placeholder="Type a message...">
+                <button id="send-msg-btn" class="icon-btn success">📤</button>
+                <button id="voice-msg-btn" class="icon-btn record-btn">🎤</button>
+            </div>
+        </section>
+
+        <!-- CALL VIEW -->
+        <section id="call-view" class="view">
+            <div class="call-container">
+                <video id="local-video" autoplay playsinline muted></video>
+                <div class="call-controls">
+                    <button id="toggle-mic-btn" class="control-btn">🎤</button>
+                    <button id="toggle-cam-btn" class="control-btn">📷</button>
+                    <button id="end-call-btn" class="control-btn end-call">☎</button>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script src="app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+[
+  {
+    "id": "f7d419a7-0b05-459e-8ed3-dd736c26401c",
+    "username": "test",
+    "password": "test",
+    "friends": [
+      "91a57d75-c2b1-4247-90ba-d4af6791f6b7"
+    ],
+    "invitesReceived": [],
+    "invitesSent": []
+  },
+  {
+    "id": "91a57d75-c2b1-4247-90ba-d4af6791f6b7",
+    "username": "hell",
+    "password": "hell",
+    "friends": [
+      "f7d419a7-0b05-459e-8ed3-dd736c26401c"
+    ],
+    "invitesReceived": [],
+    "invitesSent": []
+  },
+  {
+    "id": "b29f38ca-ad71-4dca-9d2f-0a0dd9b50585",
+    "username": "123456789",
+    "password": "$2b$10$RoCj9JbiSDnGF.iz4qe6seHfa8ta04h.G6xOaq4N9U7nfnO2tNR2W",
+    "friends": [
+      "72838fb1-4d68-40d1-863e-da02bc58c60b"
+    ],
+    "invitesReceived": [],
+    "invitesSent": []
+  },
+  {
+    "id": "72838fb1-4d68-40d1-863e-da02bc58c60b",
+    "username": "12345678",
+    "password": "$2b$10$wxRN17eQXJuut0CXjL8dq.pZPWvilZPr1HqzclA3UKI2RkmSlnQ6K",
+    "friends": [
+      "b29f38ca-ad71-4dca-9d2f-0a0dd9b50585"
+    ],
+    "invitesReceived": [],
+    "invitesSent": []
+  }
+]
